@@ -1,5 +1,5 @@
-streamlit==1.38.0
 mediapipe==0.10.15
-opencv-python==4.10.0.84
+opencv-python-headless==4.10.0.84
 numpy==1.23.5
-distutils
+requests==2.28.2
+streamlit==1.38.0
