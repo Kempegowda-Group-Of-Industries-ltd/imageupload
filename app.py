@@ -32,13 +32,13 @@ image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # Detect faces
 results = face_detection.process(image_rgb)
 
-# Draw detections
+# Draw detections manually
 if results.detections:
     for detection in results.detections:
         bboxC = detection.location_data.relative_bounding_box
         ih, iw, _ = image.shape
         x, y, w, h = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
 # Convert image to RGB for Streamlit
 image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
