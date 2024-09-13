@@ -1,6 +1,6 @@
 import streamlit as st
 import mediapipe as mp
-import cv2
+from PIL import Image, ImageDraw
 import numpy as np
 import requests
 from io import BytesIO
@@ -25,21 +25,22 @@ else:
     st.error("Please upload an image file or provide a URL.")
     st.stop()
 
-# Read image using OpenCV
-image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
-image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+# Read image using PIL
+image = Image.open(BytesIO(image_data))
+image_rgb = np.array(image.convert('RGB'))
 
-# Detect faces
+# Convert to RGB and process with MediaPipe
+image_rgb = np.array(image)
 results = face_detection.process(image_rgb)
 
-# Draw detections manually
+# Draw detections manually using PIL
+draw = ImageDraw.Draw(image)
 if results.detections:
+    ih, iw, _ = image.size
     for detection in results.detections:
         bboxC = detection.location_data.relative_bounding_box
-        ih, iw, _ = image.shape
         x, y, w, h = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
-        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        draw.rectangle([x, y, x + w, y + h], outline="green", width=3)
 
-# Convert image to RGB for Streamlit
-image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-st.image(image_rgb, caption="Detected Faces", use_column_width=True)
+# Display the image with detected faces
+st.image(image, caption="Detected Faces", use_column_width=True)
