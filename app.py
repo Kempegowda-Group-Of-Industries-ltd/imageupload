@@ -7,7 +7,6 @@ from io import BytesIO
 
 # Initialize MediaPipe Face Detection
 mp_face_detection = mp.solutions.face_detection
-mp_drawing = mp.solutions.drawing_utils
 face_detection = mp_face_detection.FaceDetection()
 
 # Streamlit interface
@@ -36,7 +35,10 @@ results = face_detection.process(image_rgb)
 # Draw detections
 if results.detections:
     for detection in results.detections:
-        mp_drawing.draw_detection(image, detection)
+        bboxC = detection.location_data.relative_bounding_box
+        ih, iw, _ = image.shape
+        x, y, w, h = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 # Convert image to RGB for Streamlit
 image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
